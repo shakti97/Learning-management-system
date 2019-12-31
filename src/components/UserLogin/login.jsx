@@ -55,7 +55,9 @@ export default class SignIn extends React.Component {
                   var authToken = isLogin.data
                   localStorage.setItem('authToken', authToken)
                   // alert('You Register Successfully');
-                  this.props.history.push('/')
+                  user === 'teacher'
+                     ? this.props.history.push('/')
+                     : this.props.history.push('/student')
 
                   console.log('login Successful ')
                }
@@ -63,6 +65,7 @@ export default class SignIn extends React.Component {
          }
       } catch (error) {
          console.log('Error')
+         this.setState({submit:false})
       }
    }
    makeActive = ref => {
@@ -86,15 +89,15 @@ export default class SignIn extends React.Component {
    }
    render() {
       return (
-         // <LoadingOverlay
-         //    active={this.state.submit}
-         //    spinner={<BounceLoader />}
-         //    styles={{
-         //       overlay: base => ({
-         //          ...base,
-         //          background: 'rgba(237, 247, 248, 0.3)'
-         //       })
-         //    }}>
+         <LoadingOverlay
+            active={this.state.submit}
+            spinner={<BounceLoader />}
+            styles={{
+               overlay: base => ({
+                  ...base,
+                  background: 'rgba(237, 247, 248, 0.3)'
+               })
+            }}>
          <Container component='main' maxWidth='xs'>
             <CssBaseline />
             <div className='paper'>
@@ -172,7 +175,7 @@ export default class SignIn extends React.Component {
                </div>
             </div>
          </Container>
-         // </LoadingOverlay>
+          </LoadingOverlay>
       )
    }
 }

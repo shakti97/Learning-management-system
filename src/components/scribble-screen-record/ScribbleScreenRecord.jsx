@@ -1,21 +1,17 @@
 import React from 'react'
 import RecordRTC from 'recordrtc'
-import './Recording.css'
+import './ScribbleScreenRecord.css'
 import uploadFile from '../../utils/generic/genericMethod'
 import API_END_POINTS from '../../utils/constants/apiEndPoint'
+import swal from 'sweetalert'
 import LoadingOverlay from 'react-loading-overlay'
 import BounceLoader from 'react-spinners/BounceLoader'
-import swal from 'sweetalert'
-import {matchPath} from 'react-router-dom'
 
 var recorder
-class ScreenRecording extends React.Component {
+class ScribbleScreenRecord extends React.Component {
    state = {
       stopRecording: false,
-      startRecording: false,
-      thumbnailImageUrl: '',
-      name: '',
-      submit: false
+      startRecording: false
    }
    componentDidMount() {
       if (
@@ -106,18 +102,9 @@ class ScreenRecording extends React.Component {
          }
       )
    }
-      stopRecordingCallback = async () => {
-      const match = matchPath(this.props.history.location.pathname, {
-         path: '/screenRecord/:id',
-         exact: false,
-         strict: false
-      })
-
-      this.video.src = this.video.srcObject = null
-      this.video.muted = false
-      this.video.volume = 1
+   stopRecordingCallback = async () => {
       const blob = recorder.getBlob()
-      this.video.src = URL.createObjectURL(recorder.getBlob())
+      console.log('blob')
       const data = new FormData()
       data.append('file', blob)
       data.append('upload_preset', 'Sick-fits')
@@ -132,6 +119,7 @@ class ScreenRecording extends React.Component {
                body: data
             }
          ).then(d => d.json())
+         console.log('res', res)
 
          const lecture = await fetch(API_END_POINTS.addLecture, {
             method: 'POST',
@@ -140,14 +128,16 @@ class ScreenRecording extends React.Component {
                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-               name: this.state.name,
+               name: 'Lecture 1',
                lectureUrl: res.url,
-               thumbnailImageUrl: this.state.thumbnailImageUrl
+               thumbnailImageUrl:
+                  'https://static.toiimg.com/photo/msid-67868104/67868104.jpg?1368689'
             })
          }).then(d => d.json())
-
+         let id = this.props.location.pathname.split('/')
+         // addLec - > add props for course Id later
          const c = await fetch(
-            `${API_END_POINTS.createPlayList}/${match.params.id}/addLec`,
+            `${API_END_POINTS.createPlayList}/${id[2]}/addLec`,
             {
                method: 'POST',
                headers: {
@@ -158,8 +148,8 @@ class ScreenRecording extends React.Component {
                   lecture: lecture._id
                })
             }
-         ).then(d => d.json())
-
+         ).then(res => res.json())
+         console.log(c)
          this.setState({
             submit: false
          })
@@ -168,7 +158,6 @@ class ScreenRecording extends React.Component {
          recorder && recorder.destroy()
          recorder = null
       } catch (error) {
-         console.log(error)
          this.setState({
             submit: false
          })
@@ -182,7 +171,6 @@ class ScreenRecording extends React.Component {
    startRecording = () => {
       !this.state.startRecording &&
          this.captureScreen(screen => {
-            this.video.srcObject = screen
             recorder = RecordRTC(screen, {
                type: 'video'
             })
@@ -213,57 +201,22 @@ class ScreenRecording extends React.Component {
                   background: 'rgba(237, 247, 248, 0.3)'
                })
             }}>
-            <div className='webcam-background'>
-               <div style={{ marginLeft: '43vw' }}>
-                  <div
-                     style={{
-                        position: 'absolute',
-                        top: '3',
-                        marginBottom: '3px'
-                        // left:'40vw'
-                     }}>
-                     <input
-                        onChange={e => {
-                           this.setState({
-                              name: e.target.value
-                           })
-                        }}
-                        style={{ display: 'block', marginBottom: '4px' }}
-                        type='text'
-                        placeholder='Enter Lecture Name'
-                     />
-                     <input
-                        onChange={e => {
-                           this.setState({ thumbnailImageUrl: e.target.value })
-                        }}
-                        type='text'
-                        placeholder='Enter Thumbnail Image URL'
-                     />
-                  </div>
-               </div>
-               <video
-                  className='webcam-record'
-                  ref={element => (this.video = element)}
-                  controls
-                  autoPlay
-                  playsInline></video>
+            <div className='rec-wrapper'>
                <button
-                  className='webcam-button'
+                  className='rec-button btn btn-success'
                   id='btn-start-recording'
                   onClick={this.startRecording}>
                   Start Recording
                </button>
                <button
-                  className='webcam-button'
+                  className='rec-button btn btn-danger'
                   id='btn-stop-recording'
                   onClick={this.stopRecording}>
                   Stop Recording
                </button>
-
-               {/* <hr /> */}
             </div>
          </LoadingOverlay>
       )
    }
 }
-export default ScreenRecording
+export default ScribbleScreenRecord

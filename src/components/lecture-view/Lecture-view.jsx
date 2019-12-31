@@ -1,9 +1,8 @@
+import { CircularProgress } from '@material-ui/core'
 import React from 'react'
-import API_END_POINTS from '../../utils/constants/apiEndPoint'
-import Video from '../videos/Video'
 import { PlusCircle } from 'react-feather'
 import { Link } from 'react-router-dom'
-import { CircularProgress } from '@material-ui/core'
+import API_END_POINTS from '../../utils/constants/apiEndPoint'
 
 class LectureView extends React.Component {
    state = {
@@ -14,7 +13,7 @@ class LectureView extends React.Component {
    async componentDidMount() {
       this.setState({ loading: true })
       const course = await fetch(
-         `${API_END_POINTS.createPlayList}/5dd02c901b6252030e45bdd4`,
+         `${API_END_POINTS.getPlayList}/${this.props.match.params.id}`,
          {
             headers: {
                'Content-Type': 'application/json',
@@ -40,15 +39,18 @@ class LectureView extends React.Component {
                style={{ margin: '33px 80px 0px 54px' }}>
                {this.state.course && this.state.course.name}
             </div>
-            <div className='videos-container'>
-               {this.state.course.lectures &&
+            <div style={{display:'inline-block'}}>
+               {this.state.course &&
+                  this.state.course.lectures &&
                   this.state.course.lectures.map(video => (
                      <div
+                          style={{display:'inline-block'}}
                         onClick={() =>
                            this.props.history.push(`/play/${video._id}`)
                         }
                         className='video-container'>
                         <img
+                            
                            className='video-thumbnail'
                            src={video && video.thumbnailImageUrl}
                            alt={video && video.thumbnailImageUrl}
@@ -59,14 +61,15 @@ class LectureView extends React.Component {
                      </div>
                   ))}
 
-               {!this.props.isNewFalse && (
-                  <Link to='/newLesson'>
-                     <div className='video-container add-video'>
-                        <PlusCircle />
-                        <div className='add-video-text'>{'Add Lecture'}</div>
-                     </div>
-                  </Link>
-               )}
+               {!this.props.isNewFalse &&
+                  !(localStorage.getItem('role') === 'student') && (
+                     <Link to={`/newLesson/${this.props.match.params.id}`}>
+                        <div className='video-container add-video'>
+                           <PlusCircle />
+                           <div className='add-video-text'>{'Add Lecture'}</div>
+                        </div>
+                     </Link>
+                  )}
             </div>
          </>
       )

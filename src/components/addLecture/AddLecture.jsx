@@ -4,14 +4,30 @@ import './AddLecture.css'
 export default class AddLecture extends Component {
    state = {
       methods: [
-         { name: 'Artboard – 1.png', route: '/webCam' },
-         { name: 'Artboard – 2.png', route: '/pen' },
-         { name: 'Artboard – 3.png', route: '/screenRecord' },
-         { name: 'Artboard – 4.png', route: '/text' },
-         { name: 'Artboard – 5.png', route: '/uploadImage' }
+         {
+            name: 'Artboard – 1.png',
+            route: `/webCam/${this.props.match.params.id}`
+         },
+         {
+            name: 'Artboard – 2.png',
+            route: `/pen/${this.props.match.params.id}`
+         },
+         {
+            name: 'Artboard – 3.png',
+            route: `/screenRecord/${this.props.match.params.id}`
+         },
+         {
+            name: 'Artboard – 4.png',
+            route: `/text/${this.props.match.params.id}`
+         },
+         {
+            name: 'Artboard – 5.png',
+            route: `/video-editor`
+         }
       ]
    }
    render() {
+      console.log(this.props.match.params.id)
       return (
          <div className='flex-container'>
             <div className='feature-text'>
@@ -22,7 +38,7 @@ export default class AddLecture extends Component {
                   <div className='method'>
                      <img
                         key={img.name}
-                        src={`./images/${img.name}`}
+                        src={`../images/${img.name}`}
                         alt={img.name}
                         onClick={() => this.props.history.push(img.route)}
                      />

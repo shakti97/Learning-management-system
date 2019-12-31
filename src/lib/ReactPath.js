@@ -1,14 +1,15 @@
 class ReactPath {
-   static scribble = '/pen'
-   static screenRecord = '/screenRecord'
-   static webcam = '/webcam'
+   static scribble = '/pen/:id'
+   static screenRecord = '/screenRecord/:id'
+   static webcam = '/webcam/:id'
    static createPlaylist = '/createPlaylist'
    static newPlaylist = '/newPlaylist'
    static playVideo = '/play/:id'
-   static newLesson = '/newLesson'
+   static newLesson = '/newLesson/:id'
    static landingPage = '/landingPage'
    static courseView = '/course/:id'
-
+   static studentDashboard = '/student'
+   static videoEditor = '/video-editor'
    static homePath = '/'
 
    //Added new routes for login, signup and forget password
